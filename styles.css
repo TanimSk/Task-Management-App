@@ -69,3 +69,34 @@ body {
     background-color: #f44336;
     color: white;
 }
+
+.edit-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+/*  Edit Task Form */
+input[type="text"].edit-task,
+textarea.edit-task {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+select.edit-task {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button.edit-task {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #2196F3;
+    color: white;
+    cursor: pointer;
+}

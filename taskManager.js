@@ -8,6 +8,17 @@ let taskListDom = document.querySelector('#taskList');
 // --------- task manager functions ---------
 
 const addTask = (title, description, priority) => {
+    // validate the task
+    if (title === '' || description === '') {
+        alert('Title and Description are required');
+        return;
+    }
+
+    if (checkDuplicateTask(title)) {
+        alert('Task already exists');
+        return;
+    }
+
     const task = {
         taskId: Date.now(),
         title: title,
@@ -19,7 +30,12 @@ const addTask = (title, description, priority) => {
     tasks.unshift(task);
 
     //   store the tasks in the local storage
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    try {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    } catch (e) {
+        alert('Local storage is full. Please delete some tasks to add more tasks');
+        return;
+    }
 
     console.log("Task added successfully");
     console.log(tasks);
@@ -39,10 +55,32 @@ const deleteTask = (taskId) => {
 }
 
 const updateTask = (taskId, updates) => {
+    // validate the task id and updates
+    if (!taskId) {
+        alert('Invalid task id');
+        return;
+    }
+
+    if (updates.title === '' || updates.description === '') {
+        alert('Title and Description are required');
+        return;
+    }
+
+    if (checkDuplicateTask(updates.title, taskId)) {
+        alert('Task already exists');
+        return;
+    }
+
+
     const index = tasks.findIndex(task => task.taskId === taskId);
 
+    console.log(taskId, index, updates);
+
     // override the existing task with the updates
-    tasks[index] = { ...tasks[index], ...updates };
+    tasks[index] = {
+        ...tasks[index],
+        ...updates
+    };
 
     //   update the local storage
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -62,6 +100,10 @@ const toggleTaskCompletion = (taskId) => {
     console.log("Task completion status updated successfully");
     console.log(tasks);
     renderTasks();
+}
+
+const checkDuplicateTask = (title, ignoreId = -1) => {
+    return tasks.some(task => task.title === title && task.taskId !== ignoreId);
 }
 
 // render the tasks on the DOM
@@ -96,12 +138,24 @@ const renderTasks = () => {
         let taskDom = document.createElement('div');
         taskDom.classList.add('task-item');
         taskDom.innerHTML = `            
+            <input type="hidden" value="${task.taskId}" class="edit-task">
+            <input type="text" value="${task.title}" class="edit-task" style="display: none;">
+            <textarea class="edit-task" style="display: none;">${task.description}</textarea>
+            <select class="edit-task" style="display: none;">
+                <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
+                <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
+                <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
+            </select>
+            <button class="edit-task update-btn" style="display: none;">Update</button>
+            
             <h3 class="${task.completed ? 'task-completed ' : ''}">${task.title}</h3>
             <p class="${task.completed ? 'task-completed ' : ''}">${task.description}</p>
             <p class="${task.completed ? 'task-completed ' : ''}">${task.priority}</p>            
+            
             <div class=task-actions>
                 <button class="delete-btn" onclick="deleteTask(${task.taskId})">Delete</button>
-                <button class="complete-btn" onclick="toggleTaskCompletion(${task.taskId})">${task.completed ? 'Mark Incomplete' : 'Mark Complete'}</button>
+                <button class="edit-btn">Edit</button>
+                <button class="complete-btn" onclick="toggleTaskCompletion(${task.taskId})">${task.completed ? 'Mark Incomplete' : 'Mark Complete'}</button>                
             </div>
         `;
         taskListDom.appendChild(taskDom);
@@ -116,6 +170,8 @@ const loadTasks = async () => {
     //  check if the tasks exist in the local storage
     if (tasksString) {
         tasks = JSON.parse(tasksString);
+        console.log("Tasks loaded successfully");
+        console.log(tasks);
         renderTasks();
     }
 }
@@ -136,3 +192,40 @@ formDom.addEventListener('submit', (e) => {
     formDom.reset();
 });
 
+// edit mode
+taskListDom.addEventListener('click', (e) => {
+    if (e.target.classList.contains('edit-btn')) {
+
+        let taskItem = e.target.closest('.task-item');
+        let editElements = taskItem.querySelectorAll('.edit-task');
+
+        editElements.forEach(element => {
+            element.style.display = 'block';
+        });
+
+        let nonEditElements = taskItem.querySelectorAll('.task-actions, h3, p');
+        nonEditElements.forEach(element => {
+            element.style.display = 'none';
+        });
+    }
+});
+
+// update task
+taskListDom.addEventListener('click', (e) => {
+    if (e.target.classList.contains('update-btn')) {
+        let taskId = e.target.closest('.task-item').querySelector('.edit-task[type="hidden"]').value;
+        // convert task id to number
+        taskId = Number(taskId);
+
+        let title = e.target.closest('.task-item').querySelector('.edit-task[type="text"]').value;
+        let description = e.target.closest('.task-item').querySelector('textarea.edit-task').value;
+        let priority = e.target.closest('.task-item').querySelector('select.edit-task').value;
+
+
+        updateTask(taskId, {
+            title: title,
+            description: description,
+            priority: priority
+        });
+    }
+});
