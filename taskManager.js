@@ -7,7 +7,7 @@ let taskListDom = document.querySelector('#taskList');
 
 // --------- task manager functions ---------
 
-const addTask = (title, description, priority) => {
+const addTask = (title, description, priority, dueDate) => {
     // validate the task
     if (title === '' || description === '') {
         alert('Title and Description are required');
@@ -24,6 +24,7 @@ const addTask = (title, description, priority) => {
         title: title,
         description: description,
         priority: priority,
+        dueDate: dueDate,
         completed: false
     };
     // push the latest task first
@@ -150,12 +151,19 @@ const renderTasks = () => {
             
             <h3 class="${task.completed ? 'task-completed ' : ''}">${task.title}</h3>
             <p class="${task.completed ? 'task-completed ' : ''}">${task.description}</p>
-            <p class="${task.completed ? 'task-completed ' : ''}">${task.priority}</p>            
+            <p class="${task.completed ? 'task-completed ' : ''}">${task.priority}</p>      
+            <p class="${task.completed ? 'task-completed ' : ''}">${task.dueDate}</p>      
             
             <div class=task-actions>
-                <button class="delete-btn" onclick="deleteTask(${task.taskId})">Delete</button>
-                <button class="edit-btn">Edit</button>
-                <button class="complete-btn" onclick="toggleTaskCompletion(${task.taskId})">${task.completed ? 'Mark Incomplete' : 'Mark Complete'}</button>                
+                <button class="delete-btn" onclick="deleteTask(${task.taskId})">
+                    <ion-icon name="trash-outline"></ion-icon>
+                </button>
+                <button class="edit-btn">
+                    <ion-icon name="create-outline"></ion-icon>
+                </button>
+                <button class="complete-btn" onclick="toggleTaskCompletion(${task.taskId})">
+                    ${task.completed ? '<ion-icon name="reload-outline"></ion-icon>' : '<ion-icon name="checkmark-circle-outline"></ion-icon>'}
+                </button>                
             </div>
         `;
         taskListDom.appendChild(taskDom);
@@ -186,9 +194,10 @@ formDom.addEventListener('submit', (e) => {
     console.log(formDom);
     let title = document.getElementById('taskTitle').value;
     let description = document.getElementById('taskDescription').value;
+    let dueDate = document.getElementById('taskDueDate').value;
     let priority = document.getElementById('taskPriority').value;
 
-    addTask(title, description, priority);
+    addTask(title, description, priority, dueDate);
     formDom.reset();
 });
 

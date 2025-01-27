@@ -21,6 +21,8 @@ Description"></textarea>
                 <option value="medium">Medium Priority</option>
                 <option value="high">High Priority</option>
             </select>
+            <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" id="taskDueDate"
+                placeholder="Due Date">
             <button type="submit">Add Task</button>
         </form>
         <!-- Task List Container -->
@@ -28,6 +30,8 @@ Description"></textarea>
         </div>
     </div>
     <script src="taskManager.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 
 </html>

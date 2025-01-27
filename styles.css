@@ -30,6 +30,10 @@ body {
     border-radius: 4px;
 }
 
+#taskDueDate {
+    outline: none;
+}
+
 #taskList {
     display: flex;
     flex-direction: column;
