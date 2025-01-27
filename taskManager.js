@@ -15,7 +15,8 @@ const addTask = (title, description, priority) => {
         priority: priority,
         completed: false
     };
-    tasks.push(task);
+    // push the latest task first
+    tasks.unshift(task);
 
     //   store the tasks in the local storage
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -66,15 +67,42 @@ const toggleTaskCompletion = (taskId) => {
 // render the tasks on the DOM
 const renderTasks = () => {
     taskListDom.innerHTML = '';
+
+    // sorting tasks by priority
+    tasks.sort((a, b) => {
+        if (a.priority === 'high') {
+            return -1;
+        } else if (a.priority === 'medium' && b.priority === 'low') {
+            return -1;
+        } else if (a.priority === 'medium' && b.priority === 'high') {
+            return 1;
+        } else if (a.priority === 'low') {
+            return 1;
+        }
+        return;
+    });
+
+    // sorting tasks by completion status
+    tasks.sort((a, b) => {
+        if (a.completed && !b.completed) {
+            return 1;
+        } else if (!a.completed && b.completed) {
+            return -1;
+        }
+        return 0;
+    });
+
     tasks.forEach(task => {
         let taskDom = document.createElement('div');
         taskDom.classList.add('task-item');
-        taskDom.innerHTML = `
-            <h3>${task.title}</h3>
-            <p>${task.description}</p>
-            <p>${task.priority}</p>
-            <button onclick="deleteTask(${task.taskId})">Delete</button>
-            <button onclick="toggleTaskCompletion(${task.taskId})">${task.completed ? 'Mark Incomplete' : 'Mark Complete'}</button>
+        taskDom.innerHTML = `            
+            <h3 class="${task.completed ? 'task-completed ' : ''}">${task.title}</h3>
+            <p class="${task.completed ? 'task-completed ' : ''}">${task.description}</p>
+            <p class="${task.completed ? 'task-completed ' : ''}">${task.priority}</p>            
+            <div class=task-actions>
+                <button class="delete-btn" onclick="deleteTask(${task.taskId})">Delete</button>
+                <button class="complete-btn" onclick="toggleTaskCompletion(${task.taskId})">${task.completed ? 'Mark Incomplete' : 'Mark Complete'}</button>
+            </div>
         `;
         taskListDom.appendChild(taskDom);
     });
