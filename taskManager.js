@@ -139,8 +139,9 @@ const renderTasks = () => {
         let taskDom = document.createElement('div');
         taskDom.classList.add('task-item');
         taskDom.setAttribute("title", task.description);
-        taskDom.innerHTML = `            
+        taskDom.innerHTML = `
             <input type="hidden" value="${task.taskId}" class="edit-task">
+            <textarea class="edit-task" style="display: none;">${task.description}</textarea>
             <input type="text" value="${task.title}" class="edit-task" style="display: none;">            
             <select class="edit-task" style="display: none;">
                 <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
@@ -149,8 +150,7 @@ const renderTasks = () => {
             </select>
             <button class="edit-task update-btn" style="display: none;">Update</button>
             
-            <h3 class="${task.completed ? 'task-completed ' : ''}">${task.title}</h3>
-            <p class="${task.completed ? 'task-completed ' : ''}">${task.description}</p>
+            <h3 class="${task.completed ? 'task-completed ' : ''}">${task.title}</h3>            
             <p class="${task.completed ? 'task-completed ' : ''}">${task.priority}</p>      
             <p class="${task.completed ? 'task-completed ' : ''}">${task.dueDate}</p>      
             
