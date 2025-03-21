@@ -138,10 +138,10 @@ const renderTasks = () => {
     tasks.forEach(task => {
         let taskDom = document.createElement('div');
         taskDom.classList.add('task-item');
+        taskDom.setAttribute("title", task.description);
         taskDom.innerHTML = `            
             <input type="hidden" value="${task.taskId}" class="edit-task">
-            <input type="text" value="${task.title}" class="edit-task" style="display: none;">
-            <textarea class="edit-task" style="display: none;">${task.description}</textarea>
+            <input type="text" value="${task.title}" class="edit-task" style="display: none;">            
             <select class="edit-task" style="display: none;">
                 <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
                 <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
